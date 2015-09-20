@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 
 //SEDS V1.0 source file
 //by Code 017
-//using GPL V3
+//Lisense: GNU Public Lisense V3
 
 namespace SEDS
 {
@@ -13,11 +13,11 @@ namespace SEDS
     {
          static void Main(string[] args)
         {
-            Console.Title = "Simple Encrypt and Decrypt System V2.0";
+            Console.Title = "Simple Encrypt and Decrypt System V3.0";
 
             Console.ForegroundColor = ConsoleColor.Cyan;
 
-            Console.WriteLine("Simple Encrypt and Decrypt System V2.0(SEDS)\nby Code017 copyright\n1.Encrypt\n2.Decrypt\n3.MD5Encrypt\n4.SHA1Encrypt\n5.About this software\n*******************************************");
+            Console.WriteLine("Simple Encrypt and Decrypt System V3.0(SEDS)\nby Code017 copyright\n1.XOR Encrypt\n2.XOR Decrypt\n3.MD5Encrypt\n4.SHA1Encrypt\n5.AES Encrypt\n6.AES Decrypt\n7.About\n*******************************************");
             String input;
             while (true)
             {
@@ -31,7 +31,7 @@ namespace SEDS
                 {
                     seds.startDecrypt();
                 }
-                else if(input == "3")
+                else if (input == "3")
                 {
                     seds.startMD5();
                 }
@@ -41,59 +41,129 @@ namespace SEDS
                 }
                 else if (input == "5")
                 {
-                    Console.WriteLine("Simple Encrypt and Decrypt System V2.0(SEDS)\nauthor Code017\nVer. 1.0\nauthor 's E-Mail:Vincent200398@outlook.com\nauthor'sQQ:1179738228\n***************************************");
+                    seds.startAESEncrypt();
+                }
+                else if (input == "6")
+                {
+                    seds.startAESDecrypt();
+                }
+                else if (input == "7")
+                {
+                    Console.WriteLine("Simple Encrypt and Decrypt System V3.0(SEDS)\nauthor Code017\nVer. 2.1\nauthor 's E-Mail:Vincent200398@outlook.com\nauthor'sQQ:1179738228\n*******************************************");
                 }
                 else Console.WriteLine("unknown command!");
             }
         }
 
-        void startSHA1()
+        void startAESDecrypt()
         {
             Console.WriteLine("please input file path(must be correct,or strange things would happen)");
             string filePath = Console.ReadLine();
-            Console.WriteLine("need to output as a file?(Y/N)");
-            string outFile = Console.ReadLine();
-            if (outFile == "Y")
+            Console.WriteLine("please input output file path");
+            string outputPath = Console.ReadLine();
+            Console.WriteLine("please input decrypt key");
+            string key = Console.ReadLine();
+            Console.WriteLine("start decrypt...");
+            bytesToFile(AESDecrypt(fileToBytes(@filePath), key), @outputPath);
+            Console.WriteLine("decryptFinish!");
+        }
+
+        void startAESEncrypt()
+        {
+            Console.WriteLine("please input file path(must be correct,or strange things would happen)");
+            string filePath = Console.ReadLine();
+            Console.WriteLine("please input output file path");
+            string outputPath = Console.ReadLine();
+            Console.WriteLine("please input decrypt key");
+            string key = Console.ReadLine();
+            Console.WriteLine("start encrypt...");
+            bytesToFile(AESEncrypt(fileToBytes(@filePath),key), @outputPath);
+            Console.WriteLine("encryptFinish!");
+        }
+
+        void startSHA1()
+        {
+            Console.WriteLine("A file or a string?(F/S)");
+            string FileOrStr = Console.ReadLine();
+            if (FileOrStr == "F")
             {
-                Console.WriteLine("please input output filePath");
-                string outputPath = Console.ReadLine();
-                Console.WriteLine("start encrypt...");
-                bytesToFile(SHA1toByte(fileToBytes(@filePath)), @outputPath);
-                Console.WriteLine("encryptFinish!");
+                Console.WriteLine("please input file path(must be correct,or strange things would happen)");
+                string filePath = Console.ReadLine();
+
+                Console.WriteLine("need to output as a file?(Y/N)");
+                string outFile = Console.ReadLine();
+                if (outFile == "Y")
+                {
+                    Console.WriteLine("please input output filePath");
+                    string outputPath = Console.ReadLine();
+                    Console.WriteLine("start encrypt...");
+                    bytesToFile(SHA1toByte(fileToBytes(@filePath)), @outputPath);
+                    Console.WriteLine("encryptFinish!");
+                }
+                else
+                {
+                    Console.WriteLine("start encrypt...");
+                    string result = SHA1(fileToBytes(@filePath));
+                    Console.WriteLine("encryptFinish!");
+                    Console.WriteLine("result:\n" + result);
+                }
+            }
+            else if (FileOrStr == "S")
+            {
+                Console.WriteLine("input a string");
+                string input = Console.ReadLine();
+                string result = SHA1fromString(@input);
+                Console.WriteLine("result:\n" + result);
             }
             else
             {
-                Console.WriteLine("start encrypt...");
-                string result = SHA1(fileToBytes(@filePath));
-                Console.WriteLine("encryptFinish!");
-                Console.WriteLine("result:\n" + result);
+                Console.WriteLine("unkown command");
+                return;
             }
         }
 
         void startMD5()
         {
-            Console.WriteLine("please input file path(must be correct,or strange things would happen)");
-            string filePath = Console.ReadLine();
-            Console.WriteLine("need to output as a file?(Y/N)");
-            string outFile = Console.ReadLine();
-            if(outFile == "Y")
+            Console.WriteLine("A file or a string?(F/S)");
+            string FileOrStr=Console.ReadLine();
+            if (FileOrStr == "F")
             {
-                Console.WriteLine("please input output filePath");
-                string outputPath = Console.ReadLine();
-                Console.WriteLine("start encrypt...");
-                bytesToFile(MD5toByte(fileToBytes(@filePath)),@outputPath);
-                Console.WriteLine("encryptFinish!");
+                Console.WriteLine("please input file path(must be correct,or strange things would happen)");
+                string filePath = Console.ReadLine();
+
+                Console.WriteLine("need to output as a file?(Y/N)");
+                string outFile = Console.ReadLine();
+                if (outFile == "Y")
+                {
+                    Console.WriteLine("please input output filePath");
+                    string outputPath = Console.ReadLine();
+                    Console.WriteLine("start encrypt...");
+                    bytesToFile(MD5toByte(fileToBytes(@filePath)), @outputPath);
+                    Console.WriteLine("encryptFinish!");
+                }
+                else
+                {
+                    Console.WriteLine("start encrypt...");
+                    string result = MD5(fileToBytes(@filePath));
+                    Console.WriteLine("encryptFinish!");
+                    Console.WriteLine("result:\n" + result);
+                }
+            }
+            else if (FileOrStr == "S")
+            {
+                Console.WriteLine("input a string");
+                string input = Console.ReadLine();
+                string result = MD5fromString(@input);
+                Console.WriteLine("result:\n" + result);
             }
             else
             {
-                Console.WriteLine("start encrypt...");
-                string result = MD5(fileToBytes(@filePath));
-                Console.WriteLine("encryptFinish!");
-                Console.WriteLine("result:\n" + result);
+                Console.WriteLine("unkown command");
+                return;
             }
         }
 
-        private void startDecrypt()
+        void startDecrypt()
         {
             Console.WriteLine("please input file path(must be correct,or strange things would happen)");
             string filePath = Console.ReadLine();
@@ -205,5 +275,50 @@ namespace SEDS
 
             return result;
         }
+        string MD5fromString(string input)
+        {
+            string result;
+            byte[] bytes = UTF8Encoding.Default.GetBytes(input);
+
+            MD5 md5 = new MD5CryptoServiceProvider();
+            bytes = md5.ComputeHash(bytes);
+            result = BitConverter.ToString(md5.ComputeHash(bytes));
+
+            return result;
+        }
+        string SHA1fromString(string input)
+        {
+            string result;
+            byte[] bytes = UTF8Encoding.Default.GetBytes(input);
+
+            SHA1 sha1 = new SHA1CryptoServiceProvider();
+            bytes = sha1.ComputeHash(bytes);
+            result = BitConverter.ToString(sha1.ComputeHash(bytes));
+
+            return result;
+        }
+        byte[] AESEncrypt(byte[] bytes,string key)
+        {
+            byte[] result;
+            RijndaelManaged encryptor = new RijndaelManaged();
+            encryptor.Key = UTF8Encoding.UTF8.GetBytes(key);
+            encryptor.Mode = CipherMode.ECB;
+            encryptor.Padding = PaddingMode.PKCS7;
+            ICryptoTransform Transform = encryptor.CreateEncryptor();
+            result = Transform.TransformFinalBlock(bytes, 0, bytes.Length);
+            return result;
+        }
+        byte[] AESDecrypt(byte[] bytes, string key)
+        {
+            byte[] result;
+            RijndaelManaged decryptor = new RijndaelManaged();
+            decryptor.Key = UTF8Encoding.UTF8.GetBytes(key);
+            decryptor.Mode = CipherMode.ECB;
+            decryptor.Padding = PaddingMode.PKCS7;
+            ICryptoTransform Transform = decryptor.CreateDecryptor();
+            result = Transform.TransformFinalBlock(bytes, 0, bytes.Length);
+            return result;
+        }
+
     }
 }
